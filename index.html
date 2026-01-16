@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PushGenius AI</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: #0f172a;
+  color: #fff;
+}
+* { box-sizing: border-box; }
+
+.app { display: flex; height: 100vh; }
+
+.sidebar {
+  width: 240px;
+  background: #020617;
+  padding: 20px;
+}
+.sidebar h2 { margin-bottom: 20px; }
+.sidebar a {
+  display: block;
+  padding: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.sidebar a.active, .sidebar a:hover {
+  background: #1e293b;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+table {
+  width: 100%;
+  background: #020617;
+  border-collapse: collapse;
+  border-radius: 12px;
+}
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #1e293b;
+}
+
+button {
+  background: #3b82f6;
+  border: none;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+}
+.modal-content {
+  background: #020617;
+  width: 420px;
+  margin: 8% auto;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #1e293b;
+  border: none;
+  color: white;
+  border-radius: 8px;
+}
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #16a34a;
+  padding: 12px 18px;
+  border-radius: 10px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <h2>🚀 PushGenius AI</h2>
+    <a class="active" data-page="dashboard">Dashboard</a>
+    <a data-page="campaigns">Campaigns</a>
+    <a data-page="subscribers">Subscribers</a>
+    <a data-page="automation">Automation</a>
+    <a data-page="segments">Segments</a>
+    <a data-page="analytics">Analytics</a>
+    <a data-page="ai">AI Tools</a>
+    <a data-page="templates">Templates</a>
+    <a data-page="integrations">Integrations</a>
+    <a data-page="settings">Settings</a>
+  </aside>
+
+  <main>
+    <section id="dashboard" class="page active">
+      <h1>Dashboard</h1>
+      <div class="stats">
+        <div class="card">Subscribers <span id="subs">12480</span></div>
+        <div class="card">Campaigns <span>64</span></div>
+        <div class="card">CTR <span>6.4%</span></div>
+        <div class="card">Revenue <span>₹92,000</span></div>
+      </div>
+    </section>
+
+    <section id="campaigns" class="page">
+      <h1>Campaigns</h1>
+      <button id="openCampaign">+ Create Campaign</button>
+      <table>
+        <tr><th>Name</th><th>Status</th><th>Clicks</th><th>Revenue</th></tr>
+        <tr><td>Flash Sale</td><td>Sent</td><td>1240</td><td>₹18,000</td></tr>
+      </table>
+    </section>
+
+    <section id="subscribers" class="page"><h1>Subscribers</h1></section>
+    <section id="automation" class="page"><h1>Automation</h1></section>
+    <section id="segments" class="page"><h1>Segments</h1></section>
+    <section id="analytics" class="page"><h1>Analytics</h1></section>
+
+    <section id="ai" class="page">
+      <h1>AI Tools</h1>
+      <input id="aiTopic" placeholder="Topic">
+      <button id="aiGenerate">Generate</button>
+      <p id="aiResult"></p>
+    </section>
+
+    <section id="templates" class="page"><h1>Templates</h1></section>
+    <section id="integrations" class="page"><h1>Integrations</h1></section>
+    <section id="settings" class="page"><h1>Settings</h1></section>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>Create Campaign</h2>
+    <input id="titleInput" maxlength="120">
+    <small id="count">0/120</small>
+    <button id="createCampaign">Create</button>
+  </div>
+</div>
+
+<div id="toast">Campaign Created ✅</div>
+
+<script>
+const pages = document.querySelectorAll('.page');
+const links = document.querySelectorAll('.sidebar a');
+const modal = document.getElementById('modal');
+const toast = document.getElementById('toast');
+const subs = document.getElementById('subs');
+const aiResult = document.getElementById('aiResult');
+const count = document.getElementById('count');
+
+links.forEach(link => {
+  link.onclick = () => {
+    links.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    pages.forEach(p => p.classList.remove('active'));
+    document.getElementById(link.dataset.page).classList.add('active');
+  };
+});
+
+document.getElementById('openCampaign').onclick = () => modal.style.display='block';
+document.getElementById('createCampaign').onclick = () => {
+  modal.style.display='none';
+  toast.style.display='block';
+  setTimeout(()=>toast.style.display='none',2000);
+};
+
+document.getElementById('aiGenerate').onclick = () => {
+  aiResult.innerText = "🔥 Limited Time Offer! Click Now!";
+};
+
+document.getElementById('titleInput').oninput = e => {
+  count.innerText = e.target.value.length + "/120";
+};
+
+setInterval(()=> {
+  subs.innerText = 12000 + Math.floor(Math.random()*500);
+}, 5000);
+</script>
+
+</body>
+</html>
